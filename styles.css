@@ -1,5 +1,4 @@
 body {
-    font-family: Arial;
     padding: 20px;
     background: #f5f5f5;
 }
@@ -13,5 +12,6 @@ body {
 }
 
 #div_center{
+    padding: 20px;
     background-color: #FFAAFF;
 }
