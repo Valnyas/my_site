@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitake-style Braids Designer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 25px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .design-area {
+            padding: 25px;
+            background: white;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #495057;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #6c757d;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .action-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .current-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: #667eea;
+        }
+
+        .undo-redo {
+            display: flex;
+            gap: 10px;
+        }
+
+        .undo-redo button {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .braid-canvas {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .braid-preview {
+            font-size: 2em;
+            color: #6c757d;
+        }
+
+        .info-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            border-bottom: none;
+        }
+
+        .info-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mitake-style Braids</h1>
+            <p class="subtitle">Design your traditional Japanese braiding patterns</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="control-group">
+                    <h2>Braid Configuration</h2>
+                    
+                    <div class="input-group">
+                        <label for="topGroup">Top Group Threads</label>
+                        <input type="number" id="topGroup" min="4" max="32" step="2" value="4">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="sideGroup">Side Group Threads</label>
+                        <input type="number" id="sideGroup" min="4" max="32" step="2" value="4">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="primary-btn" id="goBtn">Go</button>
+                        <button class="secondary-btn" id="tripBtn">Trip</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h2>Color Selection</h2>
+                    <div class="color-picker">
+                        <div class="current-color" id="currentColor"></div>
+                        <span>Current color</span>
+                    </div>
+                    <div class="undo-redo">
+                        <button id="undoBtn">Undo</button>
+                        <button id="redoBtn">Redo</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h2>Tools</h2>
+                    <div class="navigation">
+                        <button class="nav-btn active">Braid</button>
+                        <button class="nav-btn">Disk</button>
+                        <button class="nav-btn">Disk 2</button>
+                        <button class="nav-btn">Marudai</button>
+                        <button class="nav-btn">Threads</button>
+                        <button class="nav-btn">Print</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="design-area">
+                <div class="braid-canvas">
+                    <div class="braid-preview" id="braidPreview">
+                        Braid Design Preview
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h2>About the braid</h2>
+                    <p>The Mitake braids in Comprehensive Treatise vol 1 all have thread counts that are multiples of 8 and all groups of the same size. I have extended this by allowing the side groups to have a different thread count to the top and bottom groups, but the groups always have an even number of threads.</p>
+                    
+                    <p>I have found that making all the groups approximately the same size gives a more even braid. Larger groups at the top and bottom make the central stitches larger and the whole braid much looser. Larger groups at the sides give an "H" shape to the braid cross-section as the edge stitches bulge out.</p>
+                    
+                    <p>The slope and "rectangularness" of the stitches varies with the thread number. A general rule is:</p>
+                    <ul>
+                        <li>Even thread distribution creates balanced patterns</li>
+                        <li>Varying group sizes creates unique textures</li>
+                        <li>Traditional patterns use multiples of 8 threads</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const topGroupInput = document.getElementById('topGroup');
+            const sideGroupInput = document.getElementById('sideGroup');
+            const goBtn = document.getElementById('goBtn');
+            const tripBtn = document.getElementById('tripBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const redoBtn = document.getElementById('redoBtn');
+            const currentColor = document.getElementById('currentColor');
+            const braidPreview = document.getElementById('braidPreview');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            
+            // Initialize color picker
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.value = '#667eea';
+            colorPicker.style.display = 'none';
+            document.body.appendChild(colorPicker);
+            
+            // Set initial color
+            currentColor.style.backgroundColor = colorPicker.value;
+            
+            // Event listeners
+            currentColor.addEventListener('click', function() {
+                colorPicker.click();
+            });
+            
+            colorPicker.addEventListener('input', function() {
+                currentColor.style.backgroundColor = colorPicker.value;
+            });
+            
+            goBtn.addEventListener('click', function() {
+                updateBraidPreview();
+                showNotification('Braid configuration updated!');
+            });
+            
+            tripBtn.addEventListener('click', function() {
+                // Randomize thread counts
+                const randomTop = Math.floor(Math.random() * 7) * 2 + 4;
+                const randomSide = Math.floor(Math.random() * 7) * 2 + 4;
+                
+                topGroupInput.value = randomTop;
+                sideGroupInput.value = randomSide;
+                
+                updateBraidPreview();
+                showNotification('Random trip configuration applied!');
+            });
+            
+            undoBtn.addEventListener('click', function() {
+                showNotification('Undo action performed');
+            });
+            
+            redoBtn.addEventListener('click', function() {
+                showNotification('Redo action performed');
+            });
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    showNotification(`Switched to ${this.textContent} view`);
+                });
+            });
+            
+            // Function to update braid preview
+            function updateBraidPreview() {
+                const topThreads = topGroupInput.value;
+                const sideThreads = sideGroupInput.value;
+                
+                braidPreview.innerHTML = `
+                    <div style="text-align: center;">
+                        <h3>Braid Preview</h3>
+                        <p>Top/Bottom: ${topThreads} threads</p>
+                        <p>Sides: ${sideThreads} threads</p>
+                        <p>Total: ${parseInt(topThreads)*2 + parseInt(sideThreads)*2} threads</p>
+                    </div>
+                `;
+                
+                // Visual representation
+                const visual = document.createElement('div');
+                visual.style.marginTop = '20px';
+                visual.style.fontSize = '24px';
+                visual.textContent = '⬡'.repeat(Math.min(topThreads/2, 8));
+                braidPreview.appendChild(visual);
+            }
+            
+            // Function to show notifications
+            function showNotification(message) {
+                // Remove existing notification if any
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                // Create new notification
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                    font-weight: 600;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transition = 'opacity 0.5s';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+            }
+            
+            // Initialize the braid preview
+            updateBraidPreview();
+        });
+    </script>
+</body>
+</html>
